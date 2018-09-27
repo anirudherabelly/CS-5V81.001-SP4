@@ -33,22 +33,16 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
     /** TO DO: Is x contained in tree?
      */
     public boolean contains(T x) {
-        if(root==null){
-            return false;
-        }
-
-        while(root!=null){
-            if(){
-
-            }
-        }
-        return false;
+        return get(x)!=null;
     }
 
     /** TO DO: Is there an element that is equal to x in the tree?
      *  Element in tree that is equal to x is returned, null otherwise.
      */
     public T get(T x) {
+        if(x==null){
+            return null;
+        }
         Entry<T> entryX = findEntry(x);
         if(entryX==null){
             return null;
@@ -61,6 +55,9 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
      *  Returns true if x is a new element added to tree.
      */
     public boolean add(T x) {
+        if(x==null){
+            throw new IllegalArgumentException("Null values are not allowed in the BST");
+        }
         Entry<T> entryX = findEntry(x);
         if(entryX==null){
             //no elements in the tree yet
@@ -110,10 +107,20 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
      *  Return x if found, otherwise return null
      */
     public T remove(T x) {
-        Entry<T> entryX = findEntry(x);
-        if(entryX==root){
-
+        if(x==null){
+            return null;
         }
+        Entry<T> entryX = findEntry(x);
+        if(entryX.element.compareTo(x)!=0){
+            return null;
+        }
+        if(entryX.left==null||entryX.right==null){
+            //bypass
+            ;
+        }else {
+            //two children
+        }
+
         size--;
         return null;
     }
@@ -150,7 +157,6 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
             return null;
         }
         Comparable[] arr = new Comparable[size];
-        /* write code to place elements in array here */
         fillArray(root,arr,0);
         return arr;
     }
