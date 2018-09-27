@@ -33,6 +33,15 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
     /** TO DO: Is x contained in tree?
      */
     public boolean contains(T x) {
+        if(root==null){
+            return false;
+        }
+
+        while(root!=null){
+            if(){
+
+            }
+        }
         return false;
     }
 
@@ -40,7 +49,11 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
      *  Element in tree that is equal to x is returned, null otherwise.
      */
     public T get(T x) {
-        return null;
+        Entry<T> entryX = findEntry(x);
+        if(entryX==null){
+            return null;
+        }
+        return entryX.element.compareTo(x)==0?entryX.element:null;
     }
 
     /** TO DO: Add x to tree. 
@@ -48,29 +61,110 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
      *  Returns true if x is a new element added to tree.
      */
     public boolean add(T x) {
+        Entry<T> entryX = findEntry(x);
+        if(entryX==null){
+            //no elements in the tree yet
+            size++;
+            root=new Entry<>(x,null,null);
+            return true;
+        }
+        int cmp = entryX.element.compareTo(x);
+        if(cmp==0){
+            //replacing the element with current x
+            entryX.element = x;
+            return false;
+        }
+        Entry<T> newNode = new Entry<>(x,null,null);
+        if(cmp<0){
+            entryX.right = newNode;
+        }else {
+            entryX.left = newNode;
+        }
         return true;
+    }
+
+    /**
+     *  returns the entry with value.equals(x) if present or else the parent node under which x should have been present
+     * @param x element whose location should be found
+     * @return entry with x when found or the entry under which x should be present or null if no elements in the tree
+     */
+    private Entry<T> findEntry(T x){
+        Entry<T> parentOfCursor = null;
+        Entry<T> rootCursor = root;
+        while(rootCursor!=null){
+            int cmp = rootCursor.element.compareTo(x);
+            if(cmp==0)
+                break;
+            else if(cmp>0){
+                parentOfCursor = rootCursor;
+                rootCursor=rootCursor.left;
+            }else {
+                parentOfCursor = rootCursor;
+                rootCursor = rootCursor.right;
+            }
+        }
+        return rootCursor==null?parentOfCursor:rootCursor;
     }
 
     /** TO DO: Remove x from tree. 
      *  Return x if found, otherwise return null
      */
     public T remove(T x) {
+        Entry<T> entryX = findEntry(x);
+        if(entryX==root){
+
+        }
+        size--;
         return null;
     }
 
     public T min() {
-        return null;
+        if(root==null){
+            return null;
+        }
+        Entry<T> leftMostEntry = root;
+        while(leftMostEntry.left!=null){
+            leftMostEntry=leftMostEntry.left;
+        }
+        return leftMostEntry.element;
     }
 
     public T max() {
-        return null;
+        return max(root);
+    }
+
+    private T max(Entry<T> root){
+        if(root==null){
+            return null;
+        }
+        Entry<T> rightMostEntry = root;
+        while(rightMostEntry.right!=null){
+            rightMostEntry=rightMostEntry.right;
+        }
+        return rightMostEntry.element;
     }
 
     // TODO: Create an array with the elements using in-order traversal of tree
     public Comparable[] toArray() {
+        if(size==0){
+            return null;
+        }
         Comparable[] arr = new Comparable[size];
         /* write code to place elements in array here */
+        fillArray(root,arr,0);
         return arr;
+    }
+
+    private int fillArray(Entry<T> root,Comparable arr[],int startIndex){
+        if(root==null){
+            return startIndex;
+        }
+        int insertIndex = startIndex;
+        //insert left subtree into arr first
+        insertIndex = fillArray(root.left,arr,insertIndex);
+        arr[insertIndex] = root.element;
+        insertIndex = fillArray(root.right,arr,insertIndex+1);
+        return insertIndex;
     }
 
 
