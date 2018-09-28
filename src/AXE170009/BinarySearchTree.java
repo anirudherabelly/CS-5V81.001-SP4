@@ -4,7 +4,6 @@
 
 package AXE170009;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Scanner;
 
@@ -86,7 +85,13 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
      * @return entry with x when found or the entry under which x should be present or null if no elements in the tree
      */
     private Entry<T> findEntry(T x){
+        ParentChildPair<T> pair = getEntryWithParent(x);
+        return pair.child==null?pair.parent:pair.child;
+    }
+
+    private ParentChildPair<T> getEntryWithParent(T x) {
         Entry<T> parentOfCursor = null;
+        boolean isLeftChild = false;
         Entry<T> rootCursor = root;
         while(rootCursor!=null){
             int cmp = rootCursor.element.compareTo(x);
@@ -94,13 +99,15 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
                 break;
             else if(cmp>0){
                 parentOfCursor = rootCursor;
+                isLeftChild=true;
                 rootCursor=rootCursor.left;
             }else {
                 parentOfCursor = rootCursor;
+                isLeftChild=false;
                 rootCursor = rootCursor.right;
             }
         }
-        return rootCursor==null?parentOfCursor:rootCursor;
+        return  new ParentChildPair<>(parentOfCursor,rootCursor,isLeftChild);
     }
 
     /** TO DO: Remove x from tree. 
@@ -110,19 +117,32 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
         if(x==null){
             return null;
         }
-        Entry<T> entryX = findEntry(x);
-        if(entryX.element.compareTo(x)!=0){
+        ParentChildPair<T> pair = getEntryWithParent(x);
+        if(pair.child==null){
             return null;
         }
+        Entry<T> entryX = pair.child;
         if(entryX.left==null||entryX.right==null){
-            //bypass
-            ;
+            if(root==entryX){
+                root = entryX.left==null?entryX.right:entryX.left;
+            }else {
+                bypass(pair);
+            }
         }else {
             //two children
         }
-
         size--;
         return null;
+    }
+
+    private void bypass(ParentChildPair<T> parentChildPair){
+        Entry<T> child = parentChildPair.child;
+        Entry<T> grandChild = child.left==null?child.right:child.left;
+        if(parentChildPair.isLeftChild){
+            parentChildPair.parent.left = grandChild;
+        }else {
+            parentChildPair.parent.right = grandChild;
+        }
     }
 
     public T min() {
@@ -245,7 +265,16 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
             printTree(node.right);
         }
     }
-
+    private class ParentChildPair<E>{
+        Entry<E> parent;
+        Entry<E> child;
+        boolean isLeftChild;
+        public ParentChildPair(Entry<E> parent, Entry<E> child, boolean isLeftChild) {
+            this.parent = parent;
+            this.child = child;
+            this.isLeftChild = isLeftChild;
+        }
+    }
 }
 /*
 Sample input:
