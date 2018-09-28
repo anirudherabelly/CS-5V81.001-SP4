@@ -70,6 +70,7 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
             entryX.element = x;
             return false;
         }
+        size++;
         Entry<T> newNode = new Entry<>(x,null,null);
         if(cmp<0){
             entryX.right = newNode;
