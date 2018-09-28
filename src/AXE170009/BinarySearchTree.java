@@ -129,7 +129,20 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
                 bypass(pair);
             }
         }else {
-            //two children
+            Entry<T> maxLeftChild = max(entryX.left);
+            bypass(getEntryWithParent(maxLeftChild.element));
+            maxLeftChild.right = pair.child.right;
+            maxLeftChild.left = pair.child.left;
+            if(pair.parent==null){
+                //current is root element
+                root = maxLeftChild;
+            }else {
+                if(pair.isLeftChild){
+                    pair.parent.left=maxLeftChild;
+                }else {
+                    pair.parent.right=maxLeftChild;
+                }
+            }
         }
         size--;
         return null;
@@ -157,10 +170,11 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
     }
 
     public T max() {
-        return max(root);
+        Entry<T> maxEntry = max(root);
+        return maxEntry==null?null:maxEntry.element;
     }
 
-    private T max(Entry<T> root){
+    private Entry<T> max(Entry<T> root){
         if(root==null){
             return null;
         }
@@ -168,7 +182,7 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
         while(rightMostEntry.right!=null){
             rightMostEntry=rightMostEntry.right;
         }
-        return rightMostEntry.element;
+        return rightMostEntry;
     }
 
     // TODO: Create an array with the elements using in-order traversal of tree
