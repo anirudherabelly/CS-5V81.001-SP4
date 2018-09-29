@@ -10,6 +10,18 @@ package AXE170009;
  * @author Anirudh
  */
 public class TestMain {
+    BinarySearchTree<Integer> balancedTree;
+    BinarySearchTree<Integer> leftOnlyTree;
+    BinarySearchTree<Integer> rightOnlyTree;
+    BinarySearchTree<Integer> imbalancedTree;
+
+    public TestMain(){
+        balancedTree = new BinarySearchTree<>();
+        leftOnlyTree = new BinarySearchTree<>();
+        rightOnlyTree = new BinarySearchTree<>();
+        imbalancedTree = new BinarySearchTree<>();
+    }
+
 	/**
 	 * the Main here runs the individual test functions.
 	 * @param args this argument is added just to maintain consistency with java spec.
@@ -38,9 +50,12 @@ public class TestMain {
         bst.add(6);
         bst.add(8);
         Comparable arr[] = bst.toArray();
+        int expectedI = 1;
         for (Comparable i:arr){
-            System.out.println(i);
+            assert expectedI == (Integer) i;
+            expectedI++;
         }
+
 	}
 
     /**
