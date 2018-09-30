@@ -183,7 +183,14 @@ public class TestMain {
         assert rightOnlyTree.root.element==1;
         assert rightOnlyTree.root.right.element==3;
 
-        //test on imbalanced tree
+        assert imbalancedTree.remove(-1) == null;	//entry not present
+        assert imbalancedTree.remove(-4) == -4;		//entry with no children
+        assert imbalancedTree.root.left.left.left == null;
+        assert imbalancedTree.remove(7) == 7;		//entry with two children
+        assert imbalancedTree.root.right.element == 6;
+        assert imbalancedTree.remove(6) == 6;		//entry with one children
+        assert imbalancedTree.root.right.element == 8;
+        assert imbalancedTree.size == 6;
     }
 
     /**

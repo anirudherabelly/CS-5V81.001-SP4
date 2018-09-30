@@ -147,7 +147,7 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
         Entry<T> entryX = pair.child;
         if(entryX.left==null||entryX.right==null){
             //only one child bypass this element
-            if(root==entryX){
+            if(root.equals(entryX)){
                 root = entryX.left==null?entryX.right:entryX.left;
             }else {
                 bypass(pair);
@@ -179,8 +179,7 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
      * @throws IllegalArgumentException when the element to be bypassed has two children
      */
     private void bypass(ParentChildPair<T> parentChildPair){
-        if((parentChildPair.child.left!=null&&parentChildPair.child.right!=null)
-                || (parentChildPair.child.left==null&&parentChildPair.child.right==null)){
+        if(parentChildPair.child.left!=null && parentChildPair.child.right!=null){
             throw new IllegalArgumentException("Wrong pair passed to the bypass method, Element doesn't have only one child");
         }
         Entry<T> child = parentChildPair.child;
