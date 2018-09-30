@@ -7,6 +7,15 @@ package AXE170009;
 import java.util.Iterator;
 import java.util.Scanner;
 
+/**
+ * Implementation of the Binary Search Tree data structure.
+ * At every node in the tree all the elements to the left are smaller than root and all the elements
+ * to the right are greater than the root.
+ * This tree implementation doesn't allow storing of duplicates
+ * @param <T> Type of the element to be stored.
+ * @author Kautil
+ * @author Anirudh
+ */
 public class BinarySearchTree < T extends Comparable < ? super T >> implements Iterable < T > {
     static class Entry < T > {
         T element;
@@ -29,14 +38,17 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
     }
 
 
-    /** TO DO: Is x contained in tree?
+    /**
+     * @param x element to search for
+     * @return true if element is present in the tree else false
      */
     public boolean contains(T x) {
         return get(x)!=null;
     }
 
-    /** TO DO: Is there an element that is equal to x in the tree?
-     *  Element in tree that is equal to x is returned, null otherwise.
+    /** Is there an element that is equal to x in the tree?
+     *  @param x element to find
+     *  @return Element in tree that is equal to x, null otherwise.
      */
     public T get(T x) {
         if(x==null){
@@ -49,9 +61,12 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
         return entryX.element.compareTo(x)==0?entryX.element:null;
     }
 
-    /** TO DO: Add x to tree. 
+    /**
+     *  Adds the element to the tree
      *  If tree contains a node with same key, replace element by x.
-     *  Returns true if x is a new element added to tree.
+     *  @param x element to be added
+     *  @return true if x is a new element added to tree. false otherwise
+     *  @throws IllegalArgumentException if passed element is null
      */
     public boolean add(T x) {
         if(x==null){
@@ -81,7 +96,7 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
     }
 
     /**
-     *  returns the entry with value.equals(x) if present or else the parent node under which x should have been present
+     * returns the entry with value.equals(x) if present or else the parent node under which x should have been present
      * @param x element whose location should be found
      * @return entry with x when found or the entry under which x should be present or null if no elements in the tree
      */
@@ -90,6 +105,13 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
         return pair.child==null?pair.parent:pair.child;
     }
 
+    /**
+     * returns the element along with its direct parent.
+     * parent will be null if element is root.
+     * child will be null if element is not found.
+     * @param x element to be searched for
+     * @return a pair with parent and element.
+     */
     private ParentChildPair<T> getEntryWithParent(T x) {
         Entry<T> parentOfCursor = null;
         boolean isLeftChild = false;
@@ -111,8 +133,8 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
         return  new ParentChildPair<>(parentOfCursor,rootCursor,isLeftChild);
     }
 
-    /** TO DO: Remove x from tree. 
-     *  Return x if found, otherwise return null
+    /**
+     *  Removes and returns x if found, otherwise returns null
      */
     public T remove(T x) {
         if(x==null){
@@ -124,6 +146,7 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
         }
         Entry<T> entryX = pair.child;
         if(entryX.left==null||entryX.right==null){
+            //only one child bypass this element
             if(root==entryX){
                 root = entryX.left==null?entryX.right:entryX.left;
             }else {
@@ -146,10 +169,20 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
             }
         }
         size--;
-        return null;
+        return entryX.element;
     }
 
+    /**
+     * Given a pair of parent and child this function establishes a link between parent and grandchild bypassing the current element.
+     * The given child should have only one children of its own.
+     * @param parentChildPair element to be bypassed and its parent as a pair.
+     * @throws IllegalArgumentException when the element to be bypassed has two children
+     */
     private void bypass(ParentChildPair<T> parentChildPair){
+        if((parentChildPair.child.left!=null&&parentChildPair.child.right!=null)
+                || (parentChildPair.child.left==null&&parentChildPair.child.right==null)){
+            throw new IllegalArgumentException("Wrong pair passed to the bypass method, Element doesn't have only one child");
+        }
         Entry<T> child = parentChildPair.child;
         Entry<T> grandChild = child.left==null?child.right:child.left;
         if(parentChildPair.isLeftChild){
@@ -159,6 +192,9 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
         }
     }
 
+    /**
+     * @return the min element in the tree or null if tree is empty
+     */
     public T min() {
         if(root==null){
             return null;
@@ -170,11 +206,18 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
         return leftMostEntry.element;
     }
 
+    /**
+     * @return the max element in the tree or null if tree is empty
+     */
     public T max() {
         Entry<T> maxEntry = max(root);
         return maxEntry==null?null:maxEntry.element;
     }
 
+    /**
+     * returns the min element in the tree with given root or null if root is empty
+     * @param root the root of the tree or subtree to be searched in
+     */
     private Entry<T> max(Entry<T> root){
         if(root==null){
             return null;
@@ -186,7 +229,11 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
         return rightMostEntry;
     }
 
-    // TODO: Create an array with the elements using in-order traversal of tree
+    /**
+     * Creates an array with the elements using in-order traversal of tree.
+     * the created array will have elements in the ascending order.
+     * @return an array with elements in ascending order
+     */
     public Comparable[] toArray() {
         if(size==0){
             return null;
@@ -196,11 +243,18 @@ public class BinarySearchTree < T extends Comparable < ? super T >> implements I
         return arr;
     }
 
-    private int fillArray(Entry<T> root,Comparable arr[],int startIndex){
+    /**
+     * Util method for in-order traversing of the tree
+     * @param root current root.
+     * @param arr array to store the elements in.
+     * @param index current insertion index of array
+     * @return next location index for insertion
+     */
+    private int fillArray(Entry<T> root,Comparable arr[],int index){
         if(root==null){
-            return startIndex;
+            return index;
         }
-        int insertIndex = startIndex;
+        int insertIndex = index;
         //insert left subtree into arr first
         insertIndex = fillArray(root.left,arr,insertIndex);
         arr[insertIndex] = root.element;

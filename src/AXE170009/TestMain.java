@@ -10,16 +10,18 @@ package AXE170009;
  * @author Anirudh
  */
 public class TestMain {
-    BinarySearchTree<Integer> balancedTree;
-    BinarySearchTree<Integer> leftOnlyTree;
-    BinarySearchTree<Integer> rightOnlyTree;
-    BinarySearchTree<Integer> imbalancedTree;
+    private BinarySearchTree<Integer> leftOnlyTree;
+    private BinarySearchTree<Integer> rightOnlyTree;
+    private BinarySearchTree<Integer> imbalancedTree;
+    private BinarySearchTree<Integer> singleElementTree;
+    private BinarySearchTree<Integer> twoElementTree;
 
     public TestMain(){
-        balancedTree = new BinarySearchTree<>();
         leftOnlyTree = new BinarySearchTree<>();
         rightOnlyTree = new BinarySearchTree<>();
         imbalancedTree = new BinarySearchTree<>();
+        singleElementTree = new BinarySearchTree<>();
+        twoElementTree = new BinarySearchTree<>();
     }
 
 	/**
@@ -35,28 +37,154 @@ public class TestMain {
 			System.out.println("-ea option enabled good to go");
 		}
 		TestMain tester = new TestMain();
-		tester.testToArray();
-		System.out.println("All Tests passed");
+        tester.testAdd();
+        tester.testToArray();
+        tester.testMin();
+        tester.testMax();
+        tester.testContains();
+        tester.testRemove();
+        System.out.println("All Tests passed");
 	}
 
+    private void testAdd() {
+        //insert into leftOnlyTree
+        for(int i=1;i<=10;++i){
+            assert rightOnlyTree.add(i);
+        }
+        assert !rightOnlyTree.add(1);
+        rightOnlyTree.printTree();
+        assert rightOnlyTree.size == 10;
+
+        //insert into rightOnlyTree
+        for(int i=10;i>=1;--i){
+            assert leftOnlyTree.add(i);
+        }
+        assert !leftOnlyTree.add(1);
+        leftOnlyTree.printTree();
+        assert leftOnlyTree.size == 10;
+
+        assert imbalancedTree.add(5);
+        assert imbalancedTree.add(3);
+        assert imbalancedTree.add(4);
+        assert imbalancedTree.add(1);
+        assert imbalancedTree.add(2);
+        assert imbalancedTree.add(-4);
+        assert imbalancedTree.add(7);
+        assert imbalancedTree.add(6);
+        assert imbalancedTree.add(8);
+        assert !imbalancedTree.add(1);
+        imbalancedTree.printTree();
+        assert imbalancedTree.size == 9;
+
+        assert singleElementTree.add(3);
+        assert singleElementTree.size == 1;
+        assert twoElementTree.add(3);
+        assert twoElementTree.size == 1;
+        assert twoElementTree.add(1);
+        assert twoElementTree.size == 2;
+    }
+
     private void testToArray() {
-        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
-        bst.add(5);
-        bst.add(3);
-        bst.add(4);
-        bst.add(1);
-        bst.add(2);
-        bst.add(7);
-        bst.add(6);
-        bst.add(8);
-        Comparable arr[] = bst.toArray();
+        Comparable arr[] = leftOnlyTree.toArray();
         int expectedI = 1;
         for (Comparable i:arr){
             assert expectedI == (Integer) i;
             expectedI++;
         }
+        arr = rightOnlyTree.toArray();
+        expectedI = 1;
+        for (Comparable i:arr){
+            assert expectedI == (Integer) i;
+            expectedI++;
+        }
+        arr = imbalancedTree.toArray();
+        expectedI = -4;
+        assert expectedI == (Integer) arr[0];
+        for(int i=1;i<=8;++i){
+            assert i==(Integer) arr[i];
+        }
 
+        arr = singleElementTree.toArray();
+        assert arr.length == singleElementTree.size;
+        assert (Integer) arr[0] == 3;
+
+        arr = twoElementTree.toArray();
+        assert arr.length == twoElementTree.size;
+        assert (Integer) arr[0] == 1;
+        assert (Integer) arr[1] == 3;
 	}
+
+    private void testMax() {
+        int max = leftOnlyTree.max();
+        assert max == 10;
+        max = rightOnlyTree.max();
+        assert max == 10;
+        max = imbalancedTree.max();
+        assert max == 8;
+        max = singleElementTree.max();
+        assert max == 3;
+        max = twoElementTree.max();
+        assert max == 3;
+    }
+
+    private void testMin() {
+        int min = leftOnlyTree.min();
+        assert min == 1;
+        min = rightOnlyTree.min();
+        assert min == 1;
+        min = imbalancedTree.min();
+        assert min == -4;
+        min = singleElementTree.min();
+        assert min == 3;
+        min = twoElementTree.min();
+        assert min == 1;
+    }
+
+    private void testContains() {
+        assert leftOnlyTree.contains(1);
+        assert rightOnlyTree.contains(10);
+
+        assert !imbalancedTree.contains(10);
+        assert !imbalancedTree.contains(-5);
+        assert !imbalancedTree.contains(-3);
+        assert imbalancedTree.contains(-4);
+        for(int i=1;i<=8;++i){
+            assert imbalancedTree.contains(i);
+        }
+
+        assert !twoElementTree.contains(10);
+        assert twoElementTree.contains(3);
+        assert twoElementTree.contains(1);
+
+        assert !singleElementTree.contains(1);
+        assert singleElementTree.contains(3);
+        assert !singleElementTree.contains(4);
+    }
+
+    private void testRemove() {
+        assert singleElementTree.remove(3)==3;
+        assert singleElementTree.root==null;
+        assert singleElementTree.size == 0;
+        assert singleElementTree.remove(2)==null;
+
+        assert twoElementTree.remove(2)==null;
+        assert twoElementTree.remove(3)==3;
+        assert twoElementTree.root.element==1;
+        assert twoElementTree.size == 1;
+        assert twoElementTree.remove(1)==1;
+        assert twoElementTree.root==null;
+        assert twoElementTree.size==0;
+
+        assert leftOnlyTree.remove(9)==9;
+        assert leftOnlyTree.root.element==10;
+        assert leftOnlyTree.root.left.element==8;
+
+        assert rightOnlyTree.remove(2)==2;
+        assert rightOnlyTree.root.element==1;
+        assert rightOnlyTree.root.right.element==3;
+
+        //test on imbalanced tree
+    }
 
     /**
 	 * Runs the given function inside a try-catch block to capture and assert that given exception is raised
