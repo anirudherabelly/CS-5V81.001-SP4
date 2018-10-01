@@ -188,9 +188,11 @@ public class TestMain {
         assert imbalancedTree.root.left.left.left == null;
         assert imbalancedTree.remove(7) == 7;		//entry with two children
         assert imbalancedTree.root.right.element == 6;
+        assert imbalancedTree.remove(5)==5;
+        assert imbalancedTree.root.element == 4;        //remove root
         assert imbalancedTree.remove(6) == 6;		//entry with one children
         assert imbalancedTree.root.right.element == 8;
-        assert imbalancedTree.size == 6;
+        assert imbalancedTree.size == 5;
     }
 
     /**
